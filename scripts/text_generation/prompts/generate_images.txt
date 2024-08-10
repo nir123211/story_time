@@ -1,0 +1,56 @@
+Given the JSON file of character descriptions and another JSON file with the storylines formatted as `"line{line number}"` as the key and the actual line as the value, write a new JSON file. This new file should use `"line{line number}"` as the key and a detailed image prompt that captures the essence of the line with the corresponding characters' descriptions as the value. The image prompt should be vivid yet precise, focusing only on what can be visually observed, and should not include character names. Ensure each character's features are mentioned based on the character descriptions if they appear in the scene. If the character is not human, mention what the character is. The JSON file should be structured as follows:
+
+```json
+{
+  "line1": {
+    "prompt": "Detailed image prompt capturing the essence of line1 with corresponding characters' descriptions."
+  },
+  "line2": {
+    "prompt": "Detailed image prompt capturing the essence of line2 with corresponding characters' descriptions."
+  },
+  ...
+}
+```
+
+Here is an example of what the output might look like:
+
+Given character descriptions:
+```json
+{
+  "John Doe": {
+    "description": "John Doe has sharp, angular facial features with high cheekbones and a strong jawline. His deep-set, piercing blue eyes are framed by thick, dark eyebrows. He has short, jet-black hair that is always neatly combed. His nose is slightly crooked from a previous injury, and he has a small scar above his left eyebrow. John stands at 6 feet tall with a muscular build and broad shoulders, giving him a commanding presence."
+  },
+  "Jane Smith": {
+    "description": "Jane Smith has a heart-shaped face with soft, delicate features. Her large, almond-shaped green eyes are framed by long, dark eyelashes. She has wavy, auburn hair that falls to her mid-back and often catches the light, giving it a rich, reddish sheen. Jane's nose is small and slightly upturned, and she has full, rosy lips that often curve into a gentle smile. She stands at 5 feet 5 inches tall with a slender, graceful build, and her skin is a fair, porcelain tone."
+  },
+  "Black Stallion": {
+    "description": "The Black Stallion is a majestic horse with a glossy, jet-black coat and a powerful, muscular build. His mane and tail are long and flowing, and his dark, intelligent eyes exude strength and nobility. Standing at 17 hands high, he is an impressive sight, embodying both grace and power."
+  }
+}
+```
+
+And storylines:
+```json
+{
+  "line1": "John and Jane stood on the hill, watching the sunset.",
+  "line2": "Jane laughed as John told a joke.",
+  "line3": "The Black Stallion galloped across the field, its mane flowing in the wind."
+}
+```
+
+The resulting JSON file should look like:
+```json
+{
+  "line1": {
+    "prompt": "A scene with a man and a woman standing on a hill, watching the sunset. The man has sharp, angular facial features, piercing blue eyes, and a muscular build. The woman has a heart-shaped face, large green eyes, and wavy auburn hair. The sunset casts a warm glow over them, highlighting the man's jet-black hair and the woman's rich, reddish sheen in her hair."
+  },
+  "line2": {
+    "prompt": "The woman with a heart-shaped face, large green eyes, and wavy auburn hair laughs heartily, showing her full, rosy lips and delicate features. The man with sharp, angular facial features, piercing blue eyes, and a muscular build stands beside her, sharing a moment of joy. His slightly crooked nose and high cheekbones add character to his face."
+  },
+  "line3": {
+    "prompt": "A majestic horse gallops across the field. The horse has a glossy jet-black coat and a powerful, muscular build. Its long, flowing mane catches the wind, and its dark, intelligent eyes exude strength and nobility. The scene captures both grace and power as the stallion moves with unmatched elegance."
+  }
+}
+```
+
+Please ensure each image prompt is vivid and accurately reflects the storyline while incorporating the characters' descriptions, focusing only on the visual aspects without mentioning the character names, and clearly indicating if a character is not human.

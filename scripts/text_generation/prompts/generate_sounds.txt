@@ -1,0 +1,48 @@
+Given the JSON file of storylines formatted as `"line{line number}"` as the key and the actual line as the value, write a new JSON file. This new file should use `"line{line number}"` as the key, with the value being a dictionary containing the following fields:
+
+1. `music`: An up to five-word description of the music that sets the tone for the current story theme. This field is optional and should be used only when the story atmosphere shifts. However, `line1` will always have music, use this field at the start, middle and before the end of the story.
+2. `sound`: An up to five-word description of a sound effect (only one) that matches the current line. This field is optional.
+
+The JSON file should be structured as follows:
+
+```json
+{
+  "line1": {
+    "music": "Description of music for line1",
+    "sound": "Description of sound effect for line1"
+  },
+  "line2": {
+    "sound": "Description of sound effect for line2"
+  },
+  ...
+}
+```
+
+Here is an example of what the output might look like:
+
+Given storylines:
+```json
+{
+  "line1": "John and Jane stood on the hill, watching the sunset.",
+  "line2": "Jane laughed as John told a joke.",
+  "line3": "A sudden gust of wind rustled the leaves."
+}
+```
+
+The resulting JSON file should look like:
+```json
+{
+  "line1": {
+    "music": "Gentle acoustic guitar",
+    "sound": "Soft breeze"
+  },
+  "line2": {
+    "sound": "Laughter"
+  },
+  "line3": {
+    "sound": "Rustling leaves"
+  }
+}
+```
+
+Please ensure each description is concise and accurately reflects the atmosphere and action of the line. Use the `music` field sparingly, only when there is a notable shift in the story's phase or theme.

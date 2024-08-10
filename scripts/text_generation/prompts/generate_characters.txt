@@ -1,0 +1,24 @@
+Given a story, create a JSON file that contains each main character's name as the key. For each key, provide a vivid and detailed description of the character's physical appearance (excluding their clothing). The descriptions should include aspects such as facial features, hair color and style, eye color, body type, and any distinguishing marks or features. Ensure the descriptions are as detailed as possible to give a clear and complete picture of each character. The JSON file should be structured as follows:
+
+{
+  "CharacterName1": {
+    "description": "Detailed description of CharacterName1's physical appearance."
+  },
+  "CharacterName2": {
+    "description": "Detailed description of CharacterName2's physical appearance."
+  },
+  ...
+}
+
+Here is an example of what the output might look like:
+
+{
+  "John Doe": {
+    "description": "John Doe has sharp, angular facial features with high cheekbones and a strong jawline. His deep-set, piercing blue eyes are framed by thick, dark eyebrows. He has short, jet-black hair that is always neatly combed. His nose is slightly crooked from a previous injury, and he has a small scar above his left eyebrow. John stands at 6 feet tall with a muscular build and broad shoulders, giving him a commanding presence."
+  },
+  "Jane Smith": {
+    "description": "Jane Smith has a heart-shaped face with soft, delicate features. Her large, almond-shaped green eyes are framed by long, dark eyelashes. She has wavy, auburn hair that falls to her mid-back and often catches the light, giving it a rich, reddish sheen. Jane's nose is small and slightly upturned, and she has full, rosy lips that often curve into a gentle smile. She stands at 5 feet 5 inches tall with a slender, graceful build, and her skin is a fair, porcelain tone."
+  }
+}
+
+Please ensure each description is unique and captures the essence of the character's appearance.

@@ -1,0 +1,5 @@
+Given the user request, write a story that matches the request.
+
+Start with the story title.
+Then write the rest of the story.
+Do not add anything besides the title and the requested story itself.
