@@ -63,14 +63,17 @@ def create_story(prompt):
 
 
 def change_story(story_dir, new_story):
-    story_dir.rmdir()
-    story_dir.mkdir(parents=True, exist_ok=True)
+    new_story_dir = (story_dir.parent / new_story.split('\n')[0])
+    story_dir.rename(new_story_dir)
+    story_dir = new_story_dir
     (story_dir / "story.txt").write_text(new_story)
     story_lines = cut_story_to_lines(new_story)
     (story_dir / "story_lines.txt").write_text("\n\n".join(story_lines))
     story_dict = OrderedDict([(f'line{index+1}', line) for index, line in enumerate(story_lines)])
     (story_dir / "story.json").write_text(json.dumps(story_dict, indent=2))
     create_line_dirs(story_dir)
+    return story_dir
+
 
 
 if __name__ == '__main__':

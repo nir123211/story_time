@@ -21,13 +21,15 @@ def download_mp3(youtube_query, output_path, mp3_time, tries=1):
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        videos = ydl.extract_info(f"ytsearch{tries}:{youtube_query}", download=False)['entries']
+        videos = ydl.extract_info(f"ytsearch{3}:{youtube_query}", download=False)['entries']
         for video in videos:
             if video.get("live_status") == "is_live":
                 continue
             else:
                 ydl.download(video['webpage_url'])
                 break
+        else:
+            raise ValueError("POOPOOOO")
 
 
 def scrape_sounds(story_dir):
@@ -39,16 +41,16 @@ def scrape_sounds(story_dir):
     with ThreadPoolExecutor(max_workers=8) as process_pool:
         for line_folder in tqdm(line_folders, desc='Getting sounds and music'):
             if (line_folder / 'music.txt').exists() and not (line_folder / 'music.mp3').exists():
-                music_query = (line_folder / 'music.txt').read_text(), "music"
+                music_query = (line_folder / 'music.txt').read_text(), 'less than 1 hour'
                 print(f'Adding music: {music_query}')
                 process_pool.submit(download_mp3, music_query, os.path.join(line_folder, 'music.mp3'), 120, 5)
                 # download_mp3(music_query, os.path.join(line_folder, 'music.mp3'), 120)
             if (line_folder / 'sound.txt').exists() and not (line_folder / 'sound.mp3').exists():
-                effect_query = "sound of", (line_folder / 'sound.txt').read_text(),
+                effect_query = (line_folder / 'sound.txt').read_text(), 'sounds short'
                 print(f'Adding effect: {effect_query}')
                 # download_mp3(effect_query, os.path.join(line_folder, 'sound.mp3'), 10)
                 process_pool.submit(download_mp3, effect_query, os.path.join(line_folder, 'sound.mp3'), 10)
 
 
 if __name__ == '__main__':
-    download_mp3("10 hours", "laugh.mp3", 10)
+    download_mp3("fireplace sounds", "laugh.mp3", 10)
