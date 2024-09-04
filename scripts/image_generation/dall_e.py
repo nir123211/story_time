@@ -10,7 +10,7 @@ from misc import keys
 client = OpenAI(api_key=keys.gpt_key)
 
 
-def generate_image(prompt, file_path, pbar):
+def generate_image(prompt, file_path, pbar, init=False):
     response = client.images.generate(
         model="dall-e-3",
         prompt=prompt,
