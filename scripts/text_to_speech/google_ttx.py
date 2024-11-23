@@ -7,34 +7,7 @@ from gtts import gTTS
 from tqdm import tqdm
 
 
-def tts_elevenlabs(text, file_path, pbar=None):
-    url = "https://api.elevenlabs.io/v1/text-to-speech/pFZP5JQG7iQjIQuC4Bku"
-
-    headers = {
-      "Accept": "audio/mpeg",
-      "Content-Type": "application/json",
-      "xi-api-key": keys.eleven_key
-    }
-
-    data = {
-      "text": text,
-      "model_id": "eleven_monolingual_v1",
-      "voice_settings": {
-        "stability": 0.8,
-        "similarity_boost": 0.5
-      }
-    }
-
-    response = requests.post(url, json=data, headers=headers)
-    with open(file_path, 'wb') as f:
-        for chunk in response.iter_content(chunk_size=1024):
-            if chunk:
-                f.write(chunk)
-    if pbar:
-        pbar.update(1)
-
-
-def tts_gtts(text, file_path, pbar=None):
+def generate_speech(text, file_path, pbar=None):
     tts = gTTS(text, 'com')
     tts.save(file_path)
     if pbar:
@@ -48,10 +21,10 @@ def create_recordings(story_dir):
 
     pbar = tqdm(total=len(line_folders))
     processes = []
-    with ThreadPoolExecutor(max_workers=2) as pool:
+    with ThreadPoolExecutor(max_workers=4) as pool:
         for line_folder in tqdm(line_folders, desc='Creating voice recordings'):
             if (line_folder / 'line.txt').exists() and not (line_folder / 'line.mp3').exists():
                 line_text = (line_folder / 'line.txt').read_text()
                 # tts_elevenlabs(line_text, os.path.join(line_folder, 'line.mp3'), pbar)
-                processes.append(pool.submit(tts_elevenlabs, line_text, os.path.join(line_folder, 'line.mp3'), pbar))
+                processes.append(pool.submit(generate_speech, line_text, os.path.join(line_folder, 'line.mp3'), pbar))
     [process.result() for process in processes]
