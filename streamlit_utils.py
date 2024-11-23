@@ -8,7 +8,7 @@ from scripts.text_generation.create_story import create_story, change_story
 from scripts.text_generation.create_all import create_characters, add_sounds, add_image_prompts
 from scripts.sounds_and_music.sounds_adder import add_music, add_sounds_mp3
 from scripts.text_to_speech.elevenlabs import create_recordings
-from scripts.image_generation.stable_diffusion_3 import generate_story_images, generate_image
+from scripts.image_generation.local.sdxl_turbo import generate_story_images, generate_image
 from scripts.video_editing.story_to_video import (create_video_lines, create_line_video, merge_video_chunks,
                                                   finalize_video)
 

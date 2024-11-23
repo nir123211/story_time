@@ -7,11 +7,11 @@ tqdm
 moviepy
 ffmpeg-python
 requests
-diffusers
-transformers
 yt-dlp
-ffprobe-python
-sentencepiece
 gtts
-tts
 elevenlabs
+diffusers
+accelerate
+bitsandbytes
+transformers
+sentencepiece
