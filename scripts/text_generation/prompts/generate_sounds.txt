@@ -1,7 +1,13 @@
 Given the JSON file of storylines formatted as `"line{line number}"` as the key and the actual line as the value, write a new JSON file. This new file should use `"line{line number}"` as the key, with the value being a dictionary containing the following fields:
 
-1. `music`: An up to five-word description of the music that sets the tone for the current story theme. This field is optional and should be used only when the story atmosphere shifts. However, `line1` will always have music, use this field at the start, middle and before the end of the story.
-2. `sound`: An up to five-word description of a sound effect (only one) that matches the current line. This field is optional.
+1. `music`: Select music that sets the tone for the next storylines.
+   Select the music from the options:
+   [action_music.mp3, ambient_music.mp3, ambient_tension_music.mp3, dramatic_music.mp3, epic_music.mp3, fantasy_music.mp3,
+   funny_music.mp3, happy_music.mp3, romantic_music.mp3, sad_music.mp3, sci_fi_music.mp3, silence.mp3,
+   space_music.mp3, suspense_music.mp3, tension_music.mp3, victory_music.mp3].
+   This field is optional and should be used only when the story atmosphere shifts. However, `line1` will always have music. Use this field between 2-5 times throughout the storyline.
+
+2. `sound`: A detailed description of a sound effect that matches the current line. Make the sound effect descriptions vivid and descriptive, vividly capturing the atmosphere and action. This field is optional.
 
 The JSON file should be structured as follows:
 
@@ -18,7 +24,9 @@ The JSON file should be structured as follows:
 }
 ```
 
-Here is an example of what the output might look like:
+---
+
+### Example
 
 Given storylines:
 ```json
@@ -33,16 +41,21 @@ The resulting JSON file should look like:
 ```json
 {
   "line1": {
-    "music": "Gentle acoustic guitar",
-    "sound": "Soft breeze"
+    "music": "ambient_music.mp3",
+    "sound": "The soft whisper of a gentle breeze accompanied by the faint rustle of distant grass"
   },
   "line2": {
-    "sound": "Laughter"
+    "sound": "Bright, melodic laughter ringing out in the open air"
   },
   "line3": {
-    "sound": "Rustling leaves"
+    "sound": "Crisp rustling of leaves stirred by a sudden, playful gust of wind"
   }
 }
 ```
 
-Please ensure each description is concise and accurately reflects the atmosphere and action of the line. Use the `music` field sparingly, only when there is a notable shift in the story's phase or theme.
+---
+
+### Additional Notes:
+- Ensure each description is concise but vivid, providing enough detail to immerse the reader in the atmosphere of the scene.
+- Use the `music` field sparingly, only when there is a notable shift in the story's phase or theme.
+- Make sound descriptions evoke a sense of presence, clearly tying them to the context of the storyline.

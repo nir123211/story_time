@@ -3,7 +3,7 @@ from pathlib import Path
 
 from scripts.text_generation.create_all import create_full_story
 from scripts.sounds_and_music.sound_scraper import scrape_sounds
-from scripts.text_to_speech.text_to_speech import create_recordings
+from scripts.text_to_speech.google_ttx import create_recordings
 from scripts.image_generation.generate_story_images import add_story_images
 from scripts.video_editing.story_to_video import create_video
 

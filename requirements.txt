@@ -13,3 +13,5 @@ yt-dlp
 ffprobe-python
 sentencepiece
 gtts
+tts
+elevenlabs

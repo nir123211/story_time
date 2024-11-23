@@ -2,4 +2,5 @@ Given the user request, write a story that matches the request.
 
 Start with the story title.
 Then write the rest of the story.
+each story line should not be long and should be separated by new line.
 Do not add anything besides the title and the requested story itself.

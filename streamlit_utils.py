@@ -6,9 +6,9 @@ import streamlit as st
 
 from scripts.text_generation.create_story import create_story, change_story
 from scripts.text_generation.create_all import create_characters, add_sounds, add_image_prompts
-from scripts.sounds_and_music.sound_scraper import scrape_sounds, download_mp3
-from scripts.text_to_speech.text_to_speech import create_recordings
-from scripts.image_generation.open_dall_e import generate_story_images, generate_image
+from scripts.sounds_and_music.sounds_adder import add_music, add_sounds_mp3
+from scripts.text_to_speech.elevenlabs import create_recordings
+from scripts.image_generation.stable_diffusion_3 import generate_story_images, generate_image
 from scripts.video_editing.story_to_video import (create_video_lines, create_line_video, merge_video_chunks,
                                                   finalize_video)
 
@@ -84,8 +84,8 @@ def load_lines():
         generate_story_images(story_dir)
     with st.status('Thinking about the right sounds...', expanded=True):
         add_sounds(story_dir)
-    with st.status('Getting sounds...', expanded=True):
-        scrape_sounds(story_dir)
+        add_music(story_dir)
+        add_sounds_mp3(story_dir)
     with st.status('Narrating...', expanded=True):
         create_recordings(story_dir)
     with st.status('creating scenes...', expanded=True):
@@ -142,7 +142,6 @@ def edit_line():
     sound_prompt = col2.text_area('Edit the sound prompt here', value=sound_prompt, height=300)
     if col2.button('Change sound prompt'):
         (line_dir / 'sound.txt').write_text(sound_prompt)
-        download_mp3(f"{sound_prompt} sound", str(line_dir / 'sound.mp3'), 10, tries=1)
         create_line_video(line_dir, force=True)
         st.rerun()
     if col3.button('Continue'):

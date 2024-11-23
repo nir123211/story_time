@@ -26,8 +26,6 @@ def request_story(prompt):
 
 def cut_story_to_lines(story_text):
     story_lines = story_text.split('\n')
-    story_lines = [line.split('.') for line in story_lines]
-    story_lines = [*chain.from_iterable(story_lines)]
     story_lines = [*filter(lambda line: len(line) > 4, story_lines)]
     story_lines = [line.strip(" ") for line in story_lines]
     return story_lines
