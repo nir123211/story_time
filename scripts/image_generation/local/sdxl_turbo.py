@@ -1,3 +1,6 @@
+workers = 1
+
+
 def init_model():
     from diffusers import AutoPipelineForText2Image
     import torch
@@ -6,7 +9,7 @@ def init_model():
 
 
 def generate_image(model, image_prompt, output_path, pbar=None):
-    image = model(prompt=image_prompt, num_inference_steps=50, guidance_scale=3.5).images[0]
+    image = model(prompt=image_prompt, num_inference_steps=80, guidance_scale=3.5).images[0]
     image.save(output_path)
     return image
 

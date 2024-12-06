@@ -7,22 +7,45 @@ import streamlit as st
 from scripts.text_generation.create_story import create_story, change_story
 from scripts.text_generation.create_all import create_characters, add_sounds, add_image_prompts
 from scripts.sounds_and_music.sounds_adder import add_music, add_sounds_mp3
-from scripts.text_to_speech.elevenlabs import create_recordings
-from scripts.image_generation.local.sdxl_turbo import generate_story_images, generate_image
+from scripts.text_to_speech import narrations
+from scripts.image_generation import image_generator
 from scripts.video_editing.story_to_video import (create_video_lines, create_line_video, merge_video_chunks,
                                                   finalize_video)
 
 
+def get_options():
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col1:
+        text_generation_mode = st.selectbox("select image generation mode:", ["api"])
+        text_generation_model = st.selectbox("select model:", ["gpt_4_o"])
+    with col2:
+        speech_generation_mode = st.selectbox("select speech generation mode:", ['local', "api"])
+        speech_generation_model = st.selectbox("select model:",
+                                              [*narrations.all_models[speech_generation_mode].keys()])
+    with col3:
+        image_generation_mode = st.selectbox("select image generation mode:", ['local', "api"])
+        image_generation_model = st.selectbox("select model:", [*image_generator.all_models[image_generation_mode].keys()])
+        if st.button('Continue'):
+            st.session_state["speech_generation_model"] = narrations.all_models[speech_generation_mode][speech_generation_model]
+            st.session_state["image_generation_model"] = image_generator.all_models[image_generation_mode][image_generation_model]
+            st.session_state['status'] = 'create_story'
+            st.rerun()
+
+
 def create_first_story():
     st.header('Welcome To The Movie Generator! \n')
+    story_prompt = st.text_area('what story do you want to create?', height=300)
     prompt_area = st.empty()
-    col1, col2 = prompt_area.columns([6, 2])
-    story_prompt = col1.text_area('what story do you want to create?', height=5)
-    if st.button('Create Story!'):
-        story_prompt = f'A short story about: {story_prompt}'
-        st.session_state['status'] = 'edit_story'
-        with st.spinner('Generating Story...'):
-            st.session_state['story_dir']: Path = create_story(story_prompt)
+    col1, col2 = prompt_area.columns([6, 3])
+    with col2:
+        if st.button('Create Story!'):
+            st.session_state['status'] = 'edit_story'
+            with st.spinner('Generating Story...'):
+                st.session_state['story_dir']: Path = create_story(story_prompt)
+                st.rerun()
+    with col1:
+        if st.button("Back to options"):
+            st.session_state['status'] = 'get_options'
             st.rerun()
 
 
@@ -81,13 +104,13 @@ def load_lines():
     with st.status('Thinking about the right images...', expanded=True):
         add_image_prompts(story_dir)
     with st.status('Generating images...', expanded=True):
-        generate_story_images(story_dir)
+        image_generator.generate_story_images(story_dir, st.session_state["image_generation_model"])
     with st.status('Thinking about the right sounds...', expanded=True):
         add_sounds(story_dir)
         add_music(story_dir)
         add_sounds_mp3(story_dir)
     with st.status('Narrating...', expanded=True):
-        create_recordings(story_dir)
+        narrations.create_recordings(story_dir, st.session_state["speech_generation_model"])
     with st.status('creating scenes...', expanded=True):
         create_video_lines(story_dir)
     st.session_state['status'] = 'lines'
@@ -135,7 +158,7 @@ def edit_line():
     image_prompt = col1.text_area('Edit the image prompt here', value=image_prompt, height=300)
     if col1.button('Change image'):
         (line_dir / 'image.txt').write_text(image_prompt)
-        generate_image(image_prompt, (line_dir / 'image.png'))
+        # generate_image(image_prompt, (line_dir / 'image.png'))
         create_line_video(line_dir, force=True)
         st.rerun()
     sound_prompt = (line_dir / 'sound.txt').read_text()

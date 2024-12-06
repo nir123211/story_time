@@ -2,6 +2,7 @@ import os
 import random
 import cv2 as cv
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 from moviepy.editor import (VideoClip, AudioFileClip, concatenate_videoclips, CompositeAudioClip,
                             AudioClip, concatenate_audioclips, VideoFileClip, ImageClip)
 from moviepy.audio.fx.volumex import volumex
@@ -13,26 +14,78 @@ import ffmpeg
 from pathlib import Path
 
 
-def display_text(image, text):
-    font = cv.FONT_HERSHEY_SIMPLEX
+def wrap_text(text, font, max_width, draw):
+    """
+    Wraps text into multiple lines if it exceeds the max width.
+    """
+    words = text.split()
+    lines = []
+    current_line = ""
 
-    wrapped_text = textwrap.wrap(text, width=60)
-    font_size = 1
-    font_thickness = 1
+    for word in words:
+        test_line = f"{current_line} {word}".strip()
+        text_bbox = draw.textbbox((0, 0), test_line, font=font)
+        text_width = text_bbox[2] - text_bbox[0]
+        if text_width <= max_width:
+            current_line = test_line
+        else:
+            lines.append(current_line)
+            current_line = word
 
-    for i, line in enumerate(wrapped_text):
-        textsize = cv.getTextSize(line, font, font_size, font_thickness)[0]
-        gap = textsize[1] + 15
-        y = int(850+textsize[1]) + i * gap
-        x = int((image.shape[1] - textsize[0]) / 2)
+    # Add the last line
+    if current_line:
+        lines.append(current_line)
 
-        text_w, text_h = textsize
-        cv.rectangle(image, (x - 3, y+8), (x+3+text_w, y-text_h-6), (0, 0, 0), -1)
-        cv.putText(image, line, (x, y), font,
-                   font_size,
-                   (255, 255, 255),
-                   font_thickness,
-                   lineType=cv.LINE_AA)
+    return lines
+
+
+def add_subtitle_to_existing_image(image_array, text):
+    # Convert the image array to a Pillow Image
+    image = Image.fromarray(image_array).convert("RGBA")
+
+    # Create an overlay for drawing text
+    overlay = Image.new("RGBA", image.size, (255, 255, 255, 0))
+    draw = ImageDraw.Draw(overlay)
+
+    # Load a font
+    font_size = int(image.size[1] * 0.03)  # Adjust font size relative to image height
+    font = ImageFont.truetype("arial.ttf", font_size)  # Replace with a valid font file
+
+    # Maximum width for the text
+    max_width = int(image.size[0] * 0.9)  # 90% of the image width
+
+    # Wrap text to fit within the max width
+    lines = wrap_text(text, font, max_width, draw)
+
+    # Calculate total text height (including line spacing)
+    line_spacing = 10
+    total_text_height = sum(draw.textbbox((0, 0), line, font=font)[3] for line in lines) + (len(lines) - 1) * line_spacing
+
+    # Starting Y position to center the text block vertically near the bottom
+    y = image.size[1] - total_text_height - 30
+
+    # Add a semi-transparent background rectangle for the text block
+    background_margin = 10
+    draw.rectangle(
+        [(0, y - background_margin), (image.size[0], y + total_text_height + background_margin)],
+        fill=(0, 0, 0, 150),  # Semi-transparent black
+    )
+
+    # Draw each line of text
+    for line in lines:
+        text_bbox = draw.textbbox((0, 0), line, font=font)
+        text_width = text_bbox[2] - text_bbox[0]
+        text_height = text_bbox[3] - text_bbox[1]
+        x = (image.size[0] - text_width) // 2
+        draw.text((x, y), line, font=font, fill="white")
+        y += text_height + line_spacing
+
+    # Combine the image and overlay
+    combined = Image.alpha_composite(image, overlay)
+
+    # Write the modified image back to the existing image array
+    modified_image = np.array(combined.convert("RGB"))
+    image_array[:, :, :] = modified_image
 
 
 def create_line_video(line_dir: Path, force=False):
@@ -41,6 +94,7 @@ def create_line_video(line_dir: Path, force=False):
     if not (line_dir / 'image.png').exists():
         raise ValueError("No image in folder")
 
+    print("papa")
     image = cv.imread(str(line_dir / 'image.png'))
     image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
 
@@ -54,7 +108,7 @@ def create_line_video(line_dir: Path, force=False):
                           int(random_location[0] * zoom_amount):
                           int(1024 - (1024 - random_location[0]) * zoom_amount)],
                           (1024, 1024))
-        display_text(frame, line_text)
+        add_subtitle_to_existing_image(frame, line_text)
         return frame
 
     dub = (AudioFileClip(str(line_dir / 'line.mp3')).fx(audio_normalize).fx(audio_fadeout, 0.5).
@@ -78,12 +132,13 @@ def create_line_video(line_dir: Path, force=False):
     clip.write_videofile(str(line_dir / 'line.mp4'), fps=25)
 
 
-def create_video_lines(story_dir):
+def create_video_lines(story_dir, force=False):
     lines = [line for line in os.listdir(story_dir) if (story_dir / line).is_dir() and 'line' in line]
     lines = sorted(lines, key=lambda folder: int(folder.replace('line', '')))
     line_folders: [Path] = [(story_dir / line) for line in lines if (story_dir / line).is_dir()]
     for line in line_folders:
-        create_line_video(line)
+        create_line_video(line, force)
+
 
 def merge_video_chunks(story_dir):
     lines = [line for line in os.listdir(story_dir) if os.path.isdir(os.path.join(story_dir, line))
@@ -100,7 +155,10 @@ def merge_video_chunks(story_dir):
                 if music_clip is not None:
                     new_audio_clip = CompositeAudioClip([clip.audio, music_clip]).set_duration(clip.duration)
                     clip = clip.set_audio(new_audio_clip).fx(audio_fadeout, 1)
-                clip.write_videofile(os.path.join(story_dir, 'tmp', f'clip{index}.mp4'), fps=25, bitrate='1500k')
+                try:
+                    clip.write_videofile(os.path.join(story_dir, 'tmp', f'clip{index}.mp4'), fps=25, bitrate='1500k')
+                except IndexError:
+                    ...
                 index += 1
             clip = VideoFileClip(os.path.join(line_path, 'line.mp4'))
             music_clip = AudioFileClip(os.path.join(line_path, 'music.mp3')).fx(audio_normalize).fx(volumex, 0.2)
@@ -147,11 +205,8 @@ def finalize_video(story_dir):
      output(os.path.join(story_dir, f'{story_name}.mp4'), **output_opts).run())
 
 
-def create_video(story_dir):
-    create_video_chunks(story_dir)
-    merge_video_chunks(story_dir)
-    finalize_video(story_dir)
-
-
 if __name__ == '__main__':
-    story_dire = r'C:\programing\python_projects\StoryTime\stories\The Hilarious Hassle on the Hellenic Seas'
+    lala = Path("../../stories/The Distraction Dilemma at Aviel Corp")
+    create_video_lines(lala, force=True)
+    merge_video_chunks(lala)
+    finalize_video(lala)

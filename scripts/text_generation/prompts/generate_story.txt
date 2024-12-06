@@ -1,6 +1,7 @@
-Given the user request, write a story that matches the request.
+Given the user's request, craft a captivating story that fulfills the specified criteria.
 
-Start with the story title.
-Then write the rest of the story.
-each story line should not be long and should be separated by new line.
-Do not add anything besides the title and the requested story itself.
+1. Start with a clear and engaging title that encapsulates the essence of the story.
+2. Build the story with a clear progression, including rising tension and pivotal moments.
+3. Write the story in a short to medium, well-crafted sentences. each separated by a new line for readability.
+4. Keep the story between 15 and 25 lines unless instructed otherwise, ensuring each line adds value to the overall narrative.
+5. Include only the title and the story itself, avoiding any additional commentary or formatting.

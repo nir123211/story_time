@@ -1,3 +1,6 @@
+workers = 1
+
+
 def init_model():
     import torch
     from diffusers import AutoPipelineForText2Image

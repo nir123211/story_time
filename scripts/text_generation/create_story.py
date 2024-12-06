@@ -1,26 +1,21 @@
 import json
-import os
+import cv2 as cv
+import numpy as np
 from pathlib import Path
-from misc import keys
-from openai import OpenAI
 from collections import OrderedDict
-from itertools import chain
-client = OpenAI(api_key=keys.gpt_key)
+
+from misc.voices import get_random_voice
+from scripts.text_generation.models.gpt_4_o import generate_text
 
 
 def request_story(prompt):
     # load prompt
     init_prompt = Path('scripts/text_generation/prompts/generate_story.txt').read_text()
-
     messages = [{"role": "user",
                  "content": init_prompt},
                 {"role": "user",
-                 "content": prompt}
-                ]
-    chat_completion = client.chat.completions.create(messages=messages, model="gpt-4o-mini")
-    chat_completion = chat_completion.choices[0].message.content
-    story_text = chat_completion.encode(encoding='UTF-8', errors='strict').decode()
-
+                 "content": prompt}]
+    story_text = generate_text(None, messages)
     return story_text
 
 
@@ -55,6 +50,8 @@ def create_story(prompt):
     (story_dir / "story.txt").write_text(story_text)
     (story_dir / "story_lines.txt").write_text("\n\n".join(story_lines))
     (story_dir / "story.json").write_text(json.dumps(story_dict, indent=2))
+    (story_dir / "prompt.txt").write_text(prompt)
+    (story_dir / "voice.txt").write_text(get_random_voice())
 
     create_line_dirs(story_dir)
     return story_dir
@@ -73,8 +70,10 @@ def change_story(story_dir, new_story):
     return story_dir
 
 
-
 if __name__ == '__main__':
-    os.chdir("../..")
-    story_dirr = Path() / "stories" / "Nir the King and the Mysterious Cabbage"
-    change_story(story_dirr, "hellooooooo")
+    text = Path('../../stories/The Distraction Dilemma at Aviel Corp/line22/line.txt').read_text()
+    print(text)
+    image = np.zeros([1000, 1000, 3], dtype=np.uint8)
+    cv.putText(image, str(text), (100, 100), 1, 2, (200, 200, 200))
+    cv.imshow('image', image)
+    cv.waitKey(0)

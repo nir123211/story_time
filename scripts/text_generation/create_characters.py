@@ -1,11 +1,9 @@
 import json
 import os
 from pathlib import Path
-from misc import keys
-from openai import OpenAI
-from collections import OrderedDict
-from itertools import chain
-client = OpenAI(api_key=keys.gpt_key)
+
+
+from scripts.text_generation.models.gpt_4_o import generate_text
 
 
 def request_characters(story):
@@ -17,9 +15,7 @@ def request_characters(story):
                 {"role": "user",
                  "content": init_prompt}
                 ]
-    chat_completion = client.chat.completions.create(messages=messages, model="gpt-4o-mini")
-    chat_completion = chat_completion.choices[0].message.content
-    characters = chat_completion.encode(encoding='UTF-8', errors='strict').decode()
+    characters = generate_text(None, messages)
     characters = characters[characters.index('{'):]
     characters = characters[:characters.index('```')]
     return characters

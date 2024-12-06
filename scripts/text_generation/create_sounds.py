@@ -1,12 +1,8 @@
 import os
 import json
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor
-from misc import keys
-from openai import OpenAI
-from collections import OrderedDict
-from itertools import chain
-client = OpenAI(api_key=keys.gpt_key)
+
+from scripts.text_generation.models.gpt_4_o import generate_text
 
 
 def request_sounds(story_dir):
@@ -19,13 +15,11 @@ def request_sounds(story_dir):
                 {"role": "user",
                  "content": story_json}]
 
-    chat_completion = client.chat.completions.create(messages=messages, model="gpt-4o-mini")
-    chat_completion = chat_completion.choices[0].message.content
-    image_prompts = chat_completion.encode(encoding='UTF-8', errors='strict').decode()
-    image_prompts = image_prompts[image_prompts.index('{'):]
-    image_prompts = image_prompts[:image_prompts.index('```')]
-    (story_dir / "sounds.txt").write_text(image_prompts)
-    (story_dir / "sounds.json").write_text(json.dumps(json.loads(image_prompts), indent=2))
+    sound_prompts = generate_text(None, messages)
+    sound_prompts = sound_prompts[sound_prompts.index('{'):]
+    sound_prompts = sound_prompts[:sound_prompts.index('```')]
+    (story_dir / "sounds.txt").write_text(sound_prompts)
+    (story_dir / "sounds.json").write_text(json.dumps(json.loads(sound_prompts), indent=2))
 
 
 def parse_sounds(story_dir: Path):

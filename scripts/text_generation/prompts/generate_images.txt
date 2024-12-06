@@ -1,56 +1,76 @@
-Given the JSON file of character descriptions and another JSON file with the storylines formatted as `"line{line number}"` as the key and the actual line as the value, write a new JSON file. This new file should use `"line{line number}"` as the key and a detailed image prompt that captures the essence of the line with the corresponding characters' descriptions as the value. The image prompt should be vivid yet precise, focusing only on what can be visually observed, and should not include character names. Ensure each character's features are mentioned based on the character descriptions if they appear in the scene. If the character is not human, mention what the character is. The JSON file should be structured as follows:
+Given a JSON file of character descriptions and another JSON file of storylines formatted as `"line{line number}"` as the key and the actual line as the value, write a new JSON file. The new file should use `"line{line number}"` as the key and a detailed image prompt as the value.
+
+### Requirements for the Image Prompts:
+1. Each **image prompt** must be **independent**, meaning it should not rely on any other image prompts or previous lines for context.
+2. Include **all necessary information** within the prompt itself. For example, if the story takes place in a jungle, always mention the jungle setting explicitly.
+3. Capture the **essence of the line** vividly and precisely, focusing only on visually observable elements.
+4. If a character appears in the scene:
+   - Describe their physical features based on the character descriptions.
+   - **Use the character's name if they are a known figure (e.g., celebrities or public figures)**. Ensure descriptions align with their actual or provided details.
+   - For fictional characters, avoid mentioning their names directly.
+   - If the character is non-human, specify what the character is.
+5. Choose the **most relevant image generation style** (e.g., photorealistic, hand-drawn, cartoonish, oil painting) based on the tone, genre, and theme of the story. For example:
+   - **Photorealistic** for realistic, modern-day settings.
+   - **Hand-drawn or cartoonish** for whimsical or lighthearted stories.
+   - **Oil painting** for dramatic or historical narratives.
+6. Ensure that all prompts use the **same chosen style** throughout the JSON file to maintain visual consistency across all images.
+7. Ensure that the prompt fully reflects the setting, action, and style described in the line.
+8. The JSON file should be structured as follows:
 
 ```json
 {
   "line1": {
-    "prompt": "Detailed image prompt capturing the essence of line1 with corresponding characters' descriptions."
+    "prompt": "Detailed image prompt capturing the essence of line1 with all necessary visual information, character descriptions, and the chosen consistent generation style."
   },
   "line2": {
-    "prompt": "Detailed image prompt capturing the essence of line2 with corresponding characters' descriptions."
+    "prompt": "Detailed image prompt capturing the essence of line2 with all necessary visual information, character descriptions, and the chosen consistent generation style."
   },
   ...
 }
 ```
 
-Here is an example of what the output might look like:
+---
 
-Given character descriptions:
+**Example Input**:
+
+**Character Descriptions**:
 ```json
 {
-  "John Doe": {
-    "description": "John Doe has sharp, angular facial features with high cheekbones and a strong jawline. His deep-set, piercing blue eyes are framed by thick, dark eyebrows. He has short, jet-black hair that is always neatly combed. His nose is slightly crooked from a previous injury, and he has a small scar above his left eyebrow. John stands at 6 feet tall with a muscular build and broad shoulders, giving him a commanding presence."
+  "Leonardo DiCaprio": {
+    "description": "Leonardo DiCaprio has a charismatic presence with a square jawline and expressive blue eyes. His short, sandy blonde hair is often styled in a neat, classic look. He has a dimpled chin and a charming smile that exudes confidence. Standing at 6 feet tall, his build is lean but athletic."
   },
   "Jane Smith": {
     "description": "Jane Smith has a heart-shaped face with soft, delicate features. Her large, almond-shaped green eyes are framed by long, dark eyelashes. She has wavy, auburn hair that falls to her mid-back and often catches the light, giving it a rich, reddish sheen. Jane's nose is small and slightly upturned, and she has full, rosy lips that often curve into a gentle smile. She stands at 5 feet 5 inches tall with a slender, graceful build, and her skin is a fair, porcelain tone."
-  },
-  "Black Stallion": {
-    "description": "The Black Stallion is a majestic horse with a glossy, jet-black coat and a powerful, muscular build. His mane and tail are long and flowing, and his dark, intelligent eyes exude strength and nobility. Standing at 17 hands high, he is an impressive sight, embodying both grace and power."
   }
 }
 ```
 
-And storylines:
+**Storylines**:
 ```json
 {
-  "line1": "John and Jane stood on the hill, watching the sunset.",
-  "line2": "Jane laughed as John told a joke.",
-  "line3": "The Black Stallion galloped across the field, its mane flowing in the wind."
+  "line1": "Leonardo DiCaprio walked along the beach, the waves gently lapping at his feet.",
+  "line2": "Jane admired the wildflowers blooming in the meadow."
 }
 ```
 
-The resulting JSON file should look like:
+---
+
+**Example Output (for a photorealistic style)**:
 ```json
 {
   "line1": {
-    "prompt": "A scene with a man and a woman standing on a hill, watching the sunset. The man has sharp, angular facial features, piercing blue eyes, and a muscular build. The woman has a heart-shaped face, large green eyes, and wavy auburn hair. The sunset casts a warm glow over them, highlighting the man's jet-black hair and the woman's rich, reddish sheen in her hair."
+    "prompt": "A photorealistic depiction of Leonardo DiCaprio walking along a pristine beach at sunset. He has a square jawline, expressive blue eyes, and short, neatly styled sandy blonde hair. Wearing casual attire—a light blue shirt with rolled-up sleeves and beige pants—he strides along the wet sand, with gentle waves lapping at his bare feet. The ocean stretches out to the horizon, reflecting the warm hues of the sunset, while the sky is painted in shades of orange, pink, and purple."
   },
   "line2": {
-    "prompt": "The woman with a heart-shaped face, large green eyes, and wavy auburn hair laughs heartily, showing her full, rosy lips and delicate features. The man with sharp, angular facial features, piercing blue eyes, and a muscular build stands beside her, sharing a moment of joy. His slightly crooked nose and high cheekbones add character to his face."
-  },
-  "line3": {
-    "prompt": "A majestic horse gallops across the field. The horse has a glossy jet-black coat and a powerful, muscular build. Its long, flowing mane catches the wind, and its dark, intelligent eyes exude strength and nobility. The scene captures both grace and power as the stallion moves with unmatched elegance."
+    "prompt": "A photorealistic depiction of a woman standing in a meadow filled with vibrant wildflowers. She has a heart-shaped face with delicate features, large almond-shaped green eyes, and wavy auburn hair cascading down her back, catching the sunlight with a reddish sheen. Her fair porcelain skin glows in the soft, golden light of a clear afternoon. The meadow is lush with tall grass and flowers in hues of yellow, purple, and white, stretching toward a distant line of trees under a vivid blue sky."
   }
 }
 ```
 
-Please ensure each image prompt is vivid and accurately reflects the storyline while incorporating the characters' descriptions, focusing only on the visual aspects without mentioning the character names, and clearly indicating if a character is not human.
+---
+
+### Additional Notes:
+- **Character Names for Known Figures**: If the character is a celebrity or public figure, refer to them by name and match their description to provided or accurate details.
+- **Story-Relevant Style**: Evaluate the story's tone and theme to select the most fitting style for all images.
+- **Consistency**: Once a style is chosen, apply it to every image prompt in the JSON file.
+- The chosen style should enhance the storytelling experience, aligning with the narrative's overall atmosphere and genre.

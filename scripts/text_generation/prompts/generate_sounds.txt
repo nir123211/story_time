@@ -1,24 +1,29 @@
-Given the JSON file of storylines formatted as `"line{line number}"` as the key and the actual line as the value, write a new JSON file. This new file should use `"line{line number}"` as the key, with the value being a dictionary containing the following fields:
+Given a JSON file of storylines formatted as `"line{line number}"` as the key and the actual line as the value, write a new JSON file. The new file should use `"line{line number}"` as the key, with the value being a dictionary containing the following fields:
 
-1. `music`: Select music that sets the tone for the next storylines.
-   Select the music from the options:
-   [action_music.mp3, ambient_music.mp3, ambient_tension_music.mp3, dramatic_music.mp3, epic_music.mp3, fantasy_music.mp3,
-   funny_music.mp3, happy_music.mp3, romantic_music.mp3, sad_music.mp3, sci_fi_music.mp3, silence.mp3,
-   space_music.mp3, suspense_music.mp3, tension_music.mp3, victory_music.mp3].
-   This field is optional and should be used only when the story atmosphere shifts. However, `line1` will always have music. Use this field between 2-5 times throughout the storyline.
+1. **`music`**:  
+   - Select music that establishes the tone for the next storylines.  
+   - Choose from the following options:  
+     `[action_music.mp3, ambient_music.mp3, ambient_tension_music.mp3, dramatic_music.mp3, epic_music.mp3, fantasy_music.mp3, funny_music.mp3, happy_music.mp3, romantic_music.mp3, sad_music.mp3, sci_fi_music.mp3, silence.mp3, space_music.mp3, suspense_music.mp3, tension_music.mp3, victory_music.mp3]`.  
+   - This field is required for `line1` and optional for subsequent lines.  
+   - Use this field only when there is a significant atmospheric shift. It should appear **1-4 times total**, no more than once per line.
 
-2. `sound`: A detailed description of a sound effect that matches the current line. Make the sound effect descriptions vivid and descriptive, vividly capturing the atmosphere and action. This field is optional.
+2. **`sound`**:  
+   - Provide a vivid, detailed description of a sound effect that matches the current line.  
+   - The description should focus on environmental or non-human sounds and avoid references to human speech or music (human sounds like laughs are ok).
+   - This field is optional and should be used for **up to one-third** of the total lines.  
 
-The JSON file should be structured as follows:
+---
+
+**Output Format**:  
 
 ```json
 {
   "line1": {
-    "music": "Description of music for line1",
-    "sound": "Description of sound effect for line1"
+    "music": "Selected music option for line1",
+    "sound": "Detailed description of a sound effect for line1"
   },
   "line2": {
-    "sound": "Description of sound effect for line2"
+    "sound": "Detailed description of a sound effect for line2"
   },
   ...
 }
@@ -26,36 +31,41 @@ The JSON file should be structured as follows:
 
 ---
 
-### Example
+**Example**:  
 
-Given storylines:
+Given input storylines:  
 ```json
 {
   "line1": "John and Jane stood on the hill, watching the sunset.",
   "line2": "Jane laughed as John told a joke.",
-  "line3": "A sudden gust of wind rustled the leaves."
+  "line3": "A sudden gust of wind rustled the leaves.",
+  "line4": "Thunder rolled in the distance as dark clouds gathered."
 }
 ```
 
-The resulting JSON file should look like:
+The output should look like:  
 ```json
 {
   "line1": {
     "music": "ambient_music.mp3",
-    "sound": "The soft whisper of a gentle breeze accompanied by the faint rustle of distant grass"
+    "sound": "The gentle whisper of a cool breeze sweeping across the hilltop"
   },
   "line2": {
-    "sound": "Bright, melodic laughter ringing out in the open air"
+    "sound": "Bright laughter carried by the light wind"
   },
   "line3": {
-    "sound": "Crisp rustling of leaves stirred by a sudden, playful gust of wind"
+    "sound": "The crisp rustling of leaves stirred by a sudden gust"
+  },
+  "line4": {
+    "music": "tension_music.mp3",
+    "sound": "A deep rumble of distant thunder rolling through the darkening sky"
   }
 }
 ```
 
 ---
 
-### Additional Notes:
-- Ensure each description is concise but vivid, providing enough detail to immerse the reader in the atmosphere of the scene.
-- Use the `music` field sparingly, only when there is a notable shift in the story's phase or theme.
-- Make sound descriptions evoke a sense of presence, clearly tying them to the context of the storyline.
+### Notes:  
+- Ensure all descriptions are vivid, immersive, and concise.  
+- Music should complement shifts in atmosphere or tone without excessive use.  
+- Limit sound effects to align with the one-third usage cap and focus on environmental or action-based sounds.
