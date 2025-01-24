@@ -35,8 +35,8 @@ def generate_story_images(story_dir: Path, model_script, force=False, workers=1)
                 raise FileNotFoundError(f"no image prompt in {line_folder}")
         return
 
+    pbar = tqdm(total=len(line_folders), desc="generating images:")
     with ThreadPoolExecutor(max_workers=workers) as thread_pool:
-        pbar = tqdm(total=len(line_folders), desc="generating images:")
         processes = []
         for index, line_folder in enumerate(line_folders):
             if (line_folder / 'image.png').exists() and not force:
@@ -47,9 +47,9 @@ def generate_story_images(story_dir: Path, model_script, force=False, workers=1)
                                                     line_folder / 'image.png', pbar))
             else:
                 raise FileNotFoundError(f"no image prompt in {line_folder}")
-        processes = [process.result for process in processes]
+    processes = [process.result for process in processes]
 
 
 if __name__ == '__main__':
-    jaja = Path('../../old_stories/The Birth of Balfouria')
-    generate_story_images(jaja, stable_diffusion_3_5, True)
+    jaja = Path('../../stories/The Lunch Quest of Aviel Corp')
+    generate_story_images(jaja, flux_pro, False)

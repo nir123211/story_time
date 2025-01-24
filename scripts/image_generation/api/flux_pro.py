@@ -11,7 +11,7 @@ def init_model():
 
 def generate_image(model, image_prompt, output_path, pbar=None):
     output = model.run(
-        "black-forest-labs/flux-1.1-pro",
+        "black-forest-labs/flux-schnell",
         input={
             "prompt": image_prompt,
             "aspect_ratio": "1:1",

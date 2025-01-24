@@ -92,7 +92,7 @@ def create_line_video(line_dir: Path, force=False):
     if (line_dir / 'line.mp4').exists() and not force:
         return
     if not (line_dir / 'image.png').exists():
-        raise ValueError("No image in folder")
+        raise ValueError(f"No image in folder {line_dir}")
 
     print("papa")
     image = cv.imread(str(line_dir / 'image.png'))
@@ -120,7 +120,7 @@ def create_line_video(line_dir: Path, force=False):
             effect = ((AudioFileClip(str(line_dir / 'sound.mp3')).fx(audio_normalize).fx(volumex, 0.2))
                       .fx(audio_fadeout, 1))
         except ZeroDivisionError:
-            effect = ((AudioFileClip(str(line_dir / 'sound.mp3')).fx(volumex, 0.2)).fx(audio_fadeout, 1))
+            effect = ((AudioFileClip(str(line_dir / 'sound.mp3')).fx(volumex, 0.2)).fx(audio_fadeout, 1.5))
 
         if effect.duration < dub.duration:
             silence_clip = AudioClip(lambda t: [0], duration=dub.duration)
@@ -206,7 +206,7 @@ def finalize_video(story_dir):
 
 
 if __name__ == '__main__':
-    lala = Path("../../stories/The Distraction Dilemma at Aviel Corp")
+    lala = Path("../../stories/A Lifetime of Laughter")
     create_video_lines(lala, force=True)
     merge_video_chunks(lala)
     finalize_video(lala)

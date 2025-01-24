@@ -103,6 +103,7 @@ def load_lines():
     story_dir = st.session_state['story_dir']
     with st.status('Thinking about the right images...', expanded=True):
         add_image_prompts(story_dir)
+        pass
     with st.status('Generating images...', expanded=True):
         image_generator.generate_story_images(story_dir, st.session_state["image_generation_model"])
     with st.status('Thinking about the right sounds...', expanded=True):

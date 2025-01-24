@@ -36,5 +36,5 @@ def create_recordings(story_dir, model_script, force=False):
 
 
 if __name__ == '__main__':
-    story_dir = Path("../../old_stories/Hulda's Quest in Balfouria")
+    story_dir = Path("../../stories/A Lifetime of Laughter")
     create_recordings(story_dir, elevenlabs_api, force=True)

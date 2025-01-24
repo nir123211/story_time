@@ -1,6 +1,4 @@
-from pathlib import Path
-from elevenlabs import ElevenLabs
-from elevenlabs import VoiceSettings
+import requests
 from misc import keys
 
 
@@ -9,28 +7,29 @@ def init_model(story_dir):
 
 
 def generate_speech(voice_id, text, output_path, prev_text, next_text, pbar=None):
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 
-    client = ElevenLabs(
-        api_key=keys.eleven_key,
-    )
-    response = client.text_to_speech.convert(
-        voice_id=voice_id,
-        optimize_streaming_latency="0",
-        output_format="mp3_22050_32",
-        text=text,
-        model_id="eleven_multilingual_v2",
-        previous_text=prev_text,
-        next_text=next_text,
-        # use the turbo model for low latency, for other languages use the `eleven_multilingual_v2`
-        voice_settings=VoiceSettings(
-            stability=0.5,
-            similarity_boost=0.5,
-            style=0.5,
-            use_speaker_boost=False,
-        ),
-    )
-    with open(output_path, "wb") as f:
-        for chunk in response:
+    headers = {
+      "Accept": "audio/mpeg",
+      "Content-Type": "application/json",
+      "xi-api-key": keys.eleven_key
+    }
+
+    data = {
+      "text": text,
+      "model_id": "eleven_monolingual_v1",
+      "voice_settings": {
+        "stability": 0.8,
+        "similarity_boost": 0.5
+      }
+
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+    with open(output_path, 'wb') as f:
+        for chunk in response.iter_content(chunk_size=1024):
             if chunk:
                 f.write(chunk)
+    if pbar:
+        pbar.update(1)
 

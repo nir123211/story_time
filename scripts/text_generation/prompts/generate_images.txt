@@ -1,46 +1,29 @@
-Given a JSON file of character descriptions and another JSON file of storylines formatted as `"line{line number}"` as the key and the actual line as the value, write a new JSON file. The new file should use `"line{line number}"` as the key and a detailed image prompt as the value.
+Using a JSON file of character descriptions and another JSON file of storylines, generate a new JSON file where each storyline line is transformed into an independent and detailed image prompt.
 
-### Requirements for the Image Prompts:
-1. Each **image prompt** must be **independent**, meaning it should not rely on any other image prompts or previous lines for context.
-2. Include **all necessary information** within the prompt itself. For example, if the story takes place in a jungle, always mention the jungle setting explicitly.
-3. Capture the **essence of the line** vividly and precisely, focusing only on visually observable elements.
-4. If a character appears in the scene:
-   - Describe their physical features based on the character descriptions.
-   - **Use the character's name if they are a known figure (e.g., celebrities or public figures)**. Ensure descriptions align with their actual or provided details.
-   - For fictional characters, avoid mentioning their names directly.
-   - If the character is non-human, specify what the character is.
-5. Choose the **most relevant image generation style** (e.g., photorealistic, hand-drawn, cartoonish, oil painting) based on the tone, genre, and theme of the story. For example:
-   - **Photorealistic** for realistic, modern-day settings.
-   - **Hand-drawn or cartoonish** for whimsical or lighthearted stories.
-   - **Oil painting** for dramatic or historical narratives.
-6. Ensure that all prompts use the **same chosen style** throughout the JSON file to maintain visual consistency across all images.
-7. Ensure that the prompt fully reflects the setting, action, and style described in the line.
-8. The JSON file should be structured as follows:
+### Requirements:
 
-```json
-{
-  "line1": {
-    "prompt": "Detailed image prompt capturing the essence of line1 with all necessary visual information, character descriptions, and the chosen consistent generation style."
-  },
-  "line2": {
-    "prompt": "Detailed image prompt capturing the essence of line2 with all necessary visual information, character descriptions, and the chosen consistent generation style."
-  },
-  ...
-}
-```
+1. **Independent Prompts**: Each image prompt must fully describe the scene without relying on other lines or external context.
+2. **Visual Focus**: Capture the essence of the line with precise and vivid descriptions of all observable elements, including the setting, action, and characters.
+3. **Style**:
+   - **Always start each prompt by specifying the style** (e.g., “A photorealistic depiction”).
+   - Use the **same style consistently** for all prompts.
+4. **Character Descriptions**:
+   - Use the provided character description JSON to reference characters exactly as listed in the format `_character_`.
+   - Ensure consistency in their features and implied age (e.g., youthful, mature, elderly).
+   - Describe characters **only by their physical attributes and attire**, avoiding names or personal details.
+5. **Non-Human Characters**: Clearly describe their physical traits and specify their type.
+6. **Environmental Details**: Fully reflect the setting and action described in the storyline to enhance the visual scene.
 
----
-
-**Example Input**:
+### Example Input:
 
 **Character Descriptions**:
 ```json
 {
-  "Leonardo DiCaprio": {
-    "description": "Leonardo DiCaprio has a charismatic presence with a square jawline and expressive blue eyes. His short, sandy blonde hair is often styled in a neat, classic look. He has a dimpled chin and a charming smile that exudes confidence. Standing at 6 feet tall, his build is lean but athletic."
+  "Character1": {
+    "description": "A man with a square jawline, piercing blue eyes, short sandy blonde hair, and a lean athletic build, exuding a mature and confident presence."
   },
-  "Jane Smith": {
-    "description": "Jane Smith has a heart-shaped face with soft, delicate features. Her large, almond-shaped green eyes are framed by long, dark eyelashes. She has wavy, auburn hair that falls to her mid-back and often catches the light, giving it a rich, reddish sheen. Jane's nose is small and slightly upturned, and she has full, rosy lips that often curve into a gentle smile. She stands at 5 feet 5 inches tall with a slender, graceful build, and her skin is a fair, porcelain tone."
+  "Character2": {
+    "description": "A woman with a heart-shaped face, green eyes, long wavy auburn hair, and a slender, graceful figure, giving her a youthful appearance."
   }
 }
 ```
@@ -48,29 +31,20 @@ Given a JSON file of character descriptions and another JSON file of storylines 
 **Storylines**:
 ```json
 {
-  "line1": "Leonardo DiCaprio walked along the beach, the waves gently lapping at his feet.",
-  "line2": "Jane admired the wildflowers blooming in the meadow."
+  "line1": "_Character1_ strolled along the forest's edge.",
+  "line2": "_Character2_ knelt by a clear stream."
 }
 ```
 
----
+### Example Output:
 
-**Example Output (for a photorealistic style)**:
 ```json
 {
   "line1": {
-    "prompt": "A photorealistic depiction of Leonardo DiCaprio walking along a pristine beach at sunset. He has a square jawline, expressive blue eyes, and short, neatly styled sandy blonde hair. Wearing casual attire—a light blue shirt with rolled-up sleeves and beige pants—he strides along the wet sand, with gentle waves lapping at his bare feet. The ocean stretches out to the horizon, reflecting the warm hues of the sunset, while the sky is painted in shades of orange, pink, and purple."
+    "prompt": "A photorealistic depiction of _Character1_ walking along the edge of a tranquil forest. The forest is dense with tall trees, vibrant foliage, and patches of soft grass under golden evening light."
   },
   "line2": {
-    "prompt": "A photorealistic depiction of a woman standing in a meadow filled with vibrant wildflowers. She has a heart-shaped face with delicate features, large almond-shaped green eyes, and wavy auburn hair cascading down her back, catching the sunlight with a reddish sheen. Her fair porcelain skin glows in the soft, golden light of a clear afternoon. The meadow is lush with tall grass and flowers in hues of yellow, purple, and white, stretching toward a distant line of trees under a vivid blue sky."
+    "prompt": "A photorealistic depiction of _Character2_ kneeling by a clear, sparkling stream. The stream is surrounded by mossy stones and vibrant wildflowers under a canopy of lush greenery."
   }
 }
 ```
-
----
-
-### Additional Notes:
-- **Character Names for Known Figures**: If the character is a celebrity or public figure, refer to them by name and match their description to provided or accurate details.
-- **Story-Relevant Style**: Evaluate the story's tone and theme to select the most fitting style for all images.
-- **Consistency**: Once a style is chosen, apply it to every image prompt in the JSON file.
-- The chosen style should enhance the storytelling experience, aligning with the narrative's overall atmosphere and genre.
