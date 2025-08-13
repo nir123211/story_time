@@ -23,7 +23,7 @@ def request_characters(story_prompt, story):
     return characters
 
 
-def create_characters(story_dir):
+def add_characters(story_dir):
     print('creating characters')
     story = (story_dir / "story_lines.txt").read_text()
     story_prompt = (story_dir / "prompt.txt").read_text()
@@ -35,4 +35,4 @@ def create_characters(story_dir):
 if __name__ == '__main__':
     os.chdir("../..")
     story_dirr = Path() / "stories" / "The Gallant Horse"
-    create_characters(story_dirr)
+    add_characters(story_dirr)

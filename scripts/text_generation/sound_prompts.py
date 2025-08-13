@@ -31,9 +31,10 @@ def parse_sounds(story_dir: Path):
             (story_dir / line / "sound.txt").write_text(sounds["sound"])
 
 
-def add_sounds(story_dir: Path):
-    request_sounds(story_dir)
-    parse_sounds(story_dir)
+def add_sound_prompts(story_dir: Path, force=False):
+    if (not (story_dir / "sounds.txt").exists()) or force:
+        request_sounds(story_dir)
+        parse_sounds(story_dir)
 
 
 if __name__ == '__main__':

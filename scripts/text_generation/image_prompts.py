@@ -24,7 +24,6 @@ def request_image_prompts(story_dir):
     image_prompts = image_prompts[:image_prompts.index('```')]
     characters_dict = json.loads(characters)
     for character, description in characters_dict.items():
-        print(f"_{character}_", description["description"])
         image_prompts.replace(f"_{character}_", description["description"])
     (story_dir / "images.txt").write_text(image_prompts)
     (story_dir / "images.json").write_text(json.dumps(json.loads(image_prompts), indent=2))
