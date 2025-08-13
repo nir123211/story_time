@@ -4,13 +4,15 @@ from pathlib import Path
 
 import streamlit as st
 
-from scripts.text_generation.create_story import create_story, change_story
-from scripts.text_generation.create_all import create_characters, add_sounds, add_image_prompts
+from scripts.text_generation.character_descriptions import add_characters
+from scripts.text_generation.story import create_story, change_story
+from scripts.text_generation.sound_prompts import add_sound_prompts
+from scripts.text_generation.image_prompts import add_image_prompts
 from scripts.sounds_and_music.sounds_adder import add_music, add_sounds_mp3
-from scripts.text_to_speech import narrations
-from scripts.image_generation import image_generator
+from scripts.text_to_speech.elevenlabs_api import add_narrations
 from scripts.video_editing.story_to_video import (create_video_lines, create_line_video, merge_video_chunks,
                                                   finalize_video)
+from scripts.image_generation.flux_schnell import generate_story_images
 
 
 def get_options():
@@ -18,16 +20,24 @@ def get_options():
     with col1:
         text_generation_mode = st.selectbox("select image generation mode:", ["api"])
         text_generation_model = st.selectbox("select model:", ["gpt_4_o"])
+
     with col2:
-        speech_generation_mode = st.selectbox("select speech generation mode:", ['local', "api"])
+        tts_options = {"Free": ["Google Text To Speech"], "Paid": ["Eleven Labs"]}
+        speech_generation_mode = st.selectbox("Select Speech Generation Mode:", tts_options.keys())
         speech_generation_model = st.selectbox("select model:",
-                                              [*narrations.all_models[speech_generation_mode].keys()])
+                                              tts_options[speech_generation_mode])
+        if speech_generation_model == "Google Text To Speech":
+            from scripts.text_to_speech.google_ttx import add_narrations
+        elif speech_generation_model == "Eleven Labs":
+            from scripts.text_to_speech.elevenlabs_api import add_narrations
+
     with col3:
-        image_generation_mode = st.selectbox("select image generation mode:", ['local', "api"])
-        image_generation_model = st.selectbox("select model:", [*image_generator.all_models[image_generation_mode].keys()])
+        image_generation_options = {"Paid": ["Flux (schnell)"]}
+        image_generation_mode = st.selectbox("select image generation mode:", image_generation_options.keys())
+        image_generation_model = st.selectbox("select model:", image_generation_options[image_generation_mode])
+        if image_generation_model == "Flux (schnell)":
+            from scripts.image_generation.flux_schnell import generate_story_images, generate_image_from_prompt
         if st.button('Continue'):
-            st.session_state["speech_generation_model"] = narrations.all_models[speech_generation_mode][speech_generation_model]
-            st.session_state["image_generation_model"] = image_generator.all_models[image_generation_mode][image_generation_model]
             st.session_state['status'] = 'create_story'
             st.rerun()
 
@@ -61,7 +71,7 @@ def show_story():
     if col3.button('Continue'):
         st.session_state['story_dir']: Path = change_story(story_dir, story)
         with col1.status('casting characters', expanded=True):
-            create_characters(story_dir)
+            add_characters(story_dir)
             st.session_state['status'] = 'characters'
             st.rerun()
 
@@ -103,15 +113,16 @@ def load_lines():
     story_dir = st.session_state['story_dir']
     with st.status('Thinking about the right images...', expanded=True):
         add_image_prompts(story_dir)
-        pass
-    with st.status('Generating images...', expanded=True):
-        image_generator.generate_story_images(story_dir, st.session_state["image_generation_model"])
     with st.status('Thinking about the right sounds...', expanded=True):
-        add_sounds(story_dir)
-        add_music(story_dir)
+        add_sound_prompts(story_dir)
+    with st.status('Adding Sounds...', expanded=True):
         add_sounds_mp3(story_dir)
+    with st.status('Adding Music...', expanded=True):
+        add_music(story_dir)
     with st.status('Narrating...', expanded=True):
-        narrations.create_recordings(story_dir, st.session_state["speech_generation_model"])
+        add_narrations(story_dir)
+    with st.status('Generating images...', expanded=True):
+        generate_story_images(story_dir)
     with st.status('creating scenes...', expanded=True):
         create_video_lines(story_dir)
     st.session_state['status'] = 'lines'
