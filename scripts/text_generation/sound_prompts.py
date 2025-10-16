@@ -7,10 +7,10 @@ from scripts.text_generation.models.gpt_4_o import generate_text
 
 def request_sounds(story_dir):
     print("creating sounds")
-    init_prompt = (Path() / "scripts" / "text_generation" / "prompts" / "generate_sounds.txt").read_text()
-    story_json = (story_dir / "story.json").read_text()
+    init_prompt = (Path() / "scripts" / "text_generation" / "prompts" / "generate_sounds.txt").read_text(errors="ignore")
+    story_json = (story_dir / "story.json").read_text(encoding="utf-8")
 
-    messages = [{"role": "user",
+    messages = [{"role": "system",
                  "content": init_prompt},
                 {"role": "user",
                  "content": story_json}]

@@ -1,50 +1,39 @@
-Using a JSON file of character descriptions and another JSON file of storylines, generate a new JSON file where each storyline line is transformed into an independent and detailed image prompt.
+Task:
+Using a JSON file of storylines and a JSON file describing the story’s world, characters, and locations, generate a new JSON file where each storyline line is transformed into a standalone image prompt.
 
-### Requirements:
+Each prompt should reflect the visual tone, setting, and consistency of the world while staying short and vivid.
+End each prompt with a short parenthetical tag indicating the main visual focus — e.g. (focus: character), (focus: action), (focus: object), or (focus: atmosphere).
 
-1. **Independent Prompts**: Each image prompt must fully describe the scene without relying on other lines or external context.
-2. **Visual Focus**: Capture the essence of the line with precise and vivid descriptions of all observable elements, including the setting, action, and characters.
-3. **Style**:
-   - **Always start each prompt by specifying the style** (e.g., “A photorealistic depiction”).
-   - Use the **same style consistently** for all prompts.
-4. **Character Descriptions**:
-   - Use the provided character description JSON to reference characters exactly as listed in the format `_character_`.
-   - Ensure consistency in their features and implied age (e.g., youthful, mature, elderly).
-   - Describe characters **only by their physical attributes and attire**, avoiding names or personal details.
-5. **Non-Human Characters**: Clearly describe their physical traits and specify their type.
-6. **Environmental Details**: Fully reflect the setting and action described in the storyline to enhance the visual scene.
+Requirements:
 
-### Example Input:
+1. Primary Focus
 
-**Character Descriptions**:
-```json
+   * Identify the dominant visual element for each scene: a character, action, object, or atmosphere.
+   * Mention characters and locations only if relevant to the scene.
+   * Align tone, lighting, and palette with the world JSON (art style, mood, and environment).
+
+2. Environment & Composition
+
+   * Always specify the location in the scene.
+   * Optionally include framing cues (e.g., close-up, wide shot, aerial view).
+   * Keep text concise and visually clear.
+
+3. Independence
+
+   * Each prompt must stand alone and make full sense without story context.
+   * Avoid elaborating character or location details — use only minimal identifiers.
+
+Output Format:
+Return a JSON mapping each storyline line to an object with "prompt":
+
 {
-  "Character1": {
-    "description": "A man with a square jawline, piercing blue eyes, short sandy blonde hair, and a lean athletic build, exuding a mature and confident presence."
-  },
-  "Character2": {
-    "description": "A woman with a heart-shaped face, green eyes, long wavy auburn hair, and a slender, graceful figure, giving her a youthful appearance."
-  }
+"line_1": {
+"prompt": "Wide shot of Arin walking through the neon-lit streets of Lumeport, reflections glimmering in the puddles — cinematic tone, cool palette. (focus: character)"
+},
+"line_2": {
+"prompt": "Close-up of an ancient compass resting on a wooden desk under flickering candlelight. (focus: object)"
+},
+"line_3": {
+"prompt": "Stormy coastline at dusk, waves crashing against the rocks beneath a violet sky. (focus: atmosphere)"
 }
-```
-
-**Storylines**:
-```json
-{
-  "line1": "_Character1_ strolled along the forest's edge.",
-  "line2": "_Character2_ knelt by a clear stream."
 }
-```
-
-### Example Output:
-
-```json
-{
-  "line1": {
-    "prompt": "A photorealistic depiction of _Character1_ walking along the edge of a tranquil forest. The forest is dense with tall trees, vibrant foliage, and patches of soft grass under golden evening light."
-  },
-  "line2": {
-    "prompt": "A photorealistic depiction of _Character2_ kneeling by a clear, sparkling stream. The stream is surrounded by mossy stones and vibrant wildflowers under a canopy of lush greenery."
-  }
-}
-```

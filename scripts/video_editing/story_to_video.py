@@ -1,5 +1,7 @@
 import os
 import random
+import time
+
 import cv2 as cv
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -88,7 +90,7 @@ def add_subtitle_to_existing_image(image_array, text):
     image_array[:, :, :] = modified_image
 
 
-def create_line_video(line_dir: Path, force=False):
+def create_line_video(line_dir: Path, video_size, force=False):
     if (line_dir / 'line.mp4').exists() and not force:
         return
     if not (line_dir / 'image.png').exists():
@@ -104,10 +106,10 @@ def create_line_video(line_dir: Path, force=False):
     def make_frame(t):
         zoom_amount = float(t / 100)
         frame = cv.resize(image[int(random_location[1] * zoom_amount):
-                                int(1024 - (1024 - random_location[1]) * zoom_amount),
+                                int(video_size[0] - (video_size[0] - random_location[1]) * zoom_amount),
                           int(random_location[0] * zoom_amount):
-                          int(1024 - (1024 - random_location[0]) * zoom_amount)],
-                          (1024, 1024))
+                          int(video_size[1] - (video_size[1] - random_location[0]) * zoom_amount)],
+                          (video_size[0], video_size[1]))
         add_subtitle_to_existing_image(frame, line_text)
         return frame
 
@@ -132,12 +134,12 @@ def create_line_video(line_dir: Path, force=False):
     clip.write_videofile(str(line_dir / 'line.mp4'), fps=25)
 
 
-def create_video_lines(story_dir, force=False):
+def create_video_lines(story_dir, video_size, force=False):
     lines = [line for line in os.listdir(story_dir) if (story_dir / line).is_dir() and 'line' in line]
     lines = sorted(lines, key=lambda folder: int(folder.replace('line', '')))
     line_folders: [Path] = [(story_dir / line) for line in lines if (story_dir / line).is_dir()]
     for line in line_folders:
-        create_line_video(line, force)
+        create_line_video(line, video_size, force)
 
 
 def merge_video_chunks(story_dir):
@@ -161,7 +163,7 @@ def merge_video_chunks(story_dir):
                     ...
                 index += 1
             clip = VideoFileClip(os.path.join(line_path, 'line.mp4'))
-            music_clip = AudioFileClip(os.path.join(line_path, 'music.mp3')).fx(audio_normalize).fx(volumex, 0.2)
+            music_clip = AudioFileClip(os.path.join(line_path, 'music.mp3')).fx(volumex, 0.2)
         elif line == 'line0':
             clip = VideoFileClip(os.path.join(line_path, 'line.mp4'))
         else:
@@ -172,7 +174,7 @@ def merge_video_chunks(story_dir):
     clip.write_videofile(os.path.join(story_dir, 'tmp', f'clip{index}.mp4'), fps=25)
 
 
-def finalize_video(story_dir):
+def finalize_video(story_dir, video_size):
     story_name = story_dir.stem
     tmp_folder = story_dir / 'tmp'
     clips = [clip for clip in os.listdir(tmp_folder)]
@@ -184,7 +186,7 @@ def finalize_video(story_dir):
         else:
             video = concatenate_videoclips([video, VideoFileClip(os.path.join(tmp_folder, clip))])
     video = (concatenate_videoclips([video,
-                                     ImageClip(np.zeros([1024, 1024, 3]), duration=100)]).set_duration(video.duration))
+                                     ImageClip(np.zeros([video_size[0], video_size[1], 3]), duration=100)]).set_duration(video.duration))
     video.write_videofile(os.path.join(story_dir, f'{story_name}.mp4'), fps=24, audio_bitrate='128k', codec='libx264')
     input_opts = {
         'format': 'mp4',
@@ -203,10 +205,15 @@ def finalize_video(story_dir):
     }
     (ffmpeg.input(os.path.join(story_dir, f'{story_name}.mkv'), **input_opts).
      output(os.path.join(story_dir, f'{story_name}.mp4'), **output_opts).run())
+    for root, dirs, files in os.walk(story_dir):
+        for file in files:
+            if file in ["line.mp4", "clip.mp4"] or ".mkv" in file:
+                time.sleep(0.1)
+                os.remove(f"{root}\\{file}")
 
 
 if __name__ == '__main__':
-    lala = Path("../../stories/A Lifetime of Laughter")
-    create_video_lines(lala, force=True)
+    lala = Path("../../stories/Operation Bathroom Lockdown")
+    create_video_lines(lala, force=False)
     merge_video_chunks(lala)
     finalize_video(lala)

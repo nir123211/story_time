@@ -1,71 +1,56 @@
-Given a JSON file of storylines formatted as `"line{line number}"` as the key and the actual line as the value, write a new JSON file. The new file should use `"line{line number}"` as the key, with the value being a dictionary containing the following fields:
+Task:
+Given a JSON file of storylines formatted as "line{line number}" as the key and the actual line as the value, write a new JSON file. Each key should map to a dictionary containing the following fields:
 
-1. **`music`**:  
-   - Select music that establishes the tone for the next storylines.  
-   - Choose from the following options:  
-     `[action_music.mp3, ambient_music.mp3, ambient_tension_music.mp3, dramatic_music.mp3, epic_music.mp3, fantasy_music.mp3, funny_music.mp3, happy_music.mp3, romantic_music.mp3, sad_music.mp3, sci_fi_music.mp3, silence.mp3, space_music.mp3, suspense_music.mp3, tension_music.mp3, victory_music.mp3]`.  
-   - This field is required for `line1` and optional for subsequent lines.  
-   - Use this field only when there is a significant atmospheric shift. It should appear **1-4 times total**, no more than once per line.
+1. music
 
-2. **`sound`**:  
-   - Provide a vivid, detailed description of a sound effect that matches the current line.  
-   - The description should focus on environmental or non-human sounds and avoid references to human speech or music (human sounds like laughs are ok).
-   - This field is optional and should be used for **up to one-third** of the total lines.  
+* Select music that establishes or enhances the tone for the next storylines.
+* Choose from the following options:
+  \[action\_music.mp3, ambient\_music.mp3, ambient\_tension\_music.mp3, dramatic\_music.mp3, epic\_music.mp3, fantasy\_music.mp3, funny\_music.mp3, happy\_music.mp3, romantic\_music.mp3, sad\_music.mp3, sci\_fi\_music.mp3, silence.mp3, space\_music.mp3, suspense\_music.mp3, tension\_music.mp3, victory\_music.mp3]
+* This field is required for line1 to establish the story’s initial atmosphere.
+* For subsequent lines, use music only if there is a significant shift in tone or atmosphere.
+* Limit to 1–4 total uses, and never more than once per line.
+* Avoid repeating the same music for consecutive lines unless the atmosphere truly hasn’t shifted.
 
----
+2. sound
 
-**Output Format**:  
+* Provide a vivid, detailed description of a non-human or environmental sound that matches the current line.
+* Focus on natural or mechanical sounds (wind, water, birds, machinery, footsteps, rain, thunder, etc.). Human sounds are optional (laughs, cries, footsteps) but avoid dialogue.
+* Use sound for up to one-third of the total lines.
+* Make descriptions immersive, concise, and complementary to the music and visuals.
+* Include multi-sensory environmental richness: describe texture, intensity, and layered background elements. Example: "The crisp rustling of leaves stirred by a sudden gust, mingling with distant dripping water and faint bird calls."
 
-```json
+Additional Guidelines:
+
+* Keep music and sound tied to characters, locations, and world identity from the story.
+* Ensure audio reflects the story’s style, mood, and atmosphere.
+* Avoid overloading the scene with too many sounds; focus on the most relevant environmental cues.
+
+Output Format:
+
+* Return a JSON mapping each storyline line to its music and/or sound fields. Only include fields where applicable.
+
+Example Input Storylines:
 {
-  "line1": {
-    "music": "Selected music option for line1",
-    "sound": "Detailed description of a sound effect for line1"
-  },
-  "line2": {
-    "sound": "Detailed description of a sound effect for line2"
-  },
-  ...
+"line1": "Alex and Maya stood on the hill, watching the sunset.",
+"line2": "Maya laughed as Alex told a joke.",
+"line3": "A sudden gust of wind rustled the leaves.",
+"line4": "Thunder rolled in the distance as dark clouds gathered."
 }
-```
 
----
-
-**Example**:  
-
-Given input storylines:  
-```json
+Example Output JSON:
 {
-  "line1": "John and Jane stood on the hill, watching the sunset.",
-  "line2": "Jane laughed as John told a joke.",
-  "line3": "A sudden gust of wind rustled the leaves.",
-  "line4": "Thunder rolled in the distance as dark clouds gathered."
+"line1": {
+"music": "ambient\_music.mp3",
+"sound": "The gentle whisper of a cool breeze sweeping across the hilltop, carrying the faint scent of wildflowers and rustling grass."
+},
+"line2": {
+"sound": "Bright laughter carried by the light wind, mingling with distant bird calls from the forest below."
+},
+"line3": {
+"sound": "The crisp rustling of leaves stirred by a sudden gust, accompanied by the soft clatter of loose branches."
+},
+"line4": {
+"music": "tension\_music.mp3",
+"sound": "A deep rumble of distant thunder rolling through the darkening sky, with intermittent splashes of rain hitting the hillside."
 }
-```
-
-The output should look like:  
-```json
-{
-  "line1": {
-    "music": "ambient_music.mp3",
-    "sound": "The gentle whisper of a cool breeze sweeping across the hilltop"
-  },
-  "line2": {
-    "sound": "Bright laughter carried by the light wind"
-  },
-  "line3": {
-    "sound": "The crisp rustling of leaves stirred by a sudden gust"
-  },
-  "line4": {
-    "music": "tension_music.mp3",
-    "sound": "A deep rumble of distant thunder rolling through the darkening sky"
-  }
 }
-```
-
----
-
-### Notes:  
-- Ensure all descriptions are vivid, immersive, and concise.  
-- Music should complement shifts in atmosphere or tone without excessive use.  
-- Limit sound effects to align with the one-third usage cap and focus on environmental or action-based sounds.

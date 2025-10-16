@@ -1,0 +1,37 @@
+Task:
+Given:
+• `descriptions` — JSON with World Identity, Characters, and Locations.
+• `prompt` — one short image prompt string (may include a `(focus: …)` tag).
+
+Rewrite `prompt` into one immersive, self-contained image prompt.
+Use `descriptions` only to enrich relevant visual details.
+Keep the original scene, composition, and focus intact.
+Use the `(focus: …)` tag only as guidance; **do not include it** in the output.
+Return only the final text.
+
+Guidelines:
+
+1. **Use Selective Detail**
+
+   * For any character name, include only a few visual traits (e.g., hair, clothing, posture).
+   * For locations, describe only the immediate environment.
+   * If missing, infer plausible details from World Identity.
+
+2. **Resolve Ambiguity**
+
+   * Replace unclear pronouns or vague terms (“here,” “there”) with specific descriptive phrases.
+   * Avoid over-repetition or excessive names.
+
+3. **Maintain World Consistency**
+
+   * Apply world style, lighting, color palette, and tone naturally.
+   * Never invent new elements or contradict existing ones.
+
+4. **Enhance Visual Clarity**
+
+   * Strengthen atmosphere, perspective, and texture where appropriate.
+   * Mention props or clothing only if relevant.
+   * Keep wording concise and cinematic.
+
+Output:
+Return only the final enriched image prompt string — no JSON, keys, or commentary.

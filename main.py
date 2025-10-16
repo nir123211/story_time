@@ -1,24 +1,34 @@
 from pathlib import Path
 
-from scripts.text_generation.create_all import create_full_story
-from scripts.sounds_and_music.sound_scraper import scrape_sounds
-from scripts.text_to_speech.local.google_ttx import create_recordings
-from scripts.image_generation.generate_story_images import add_story_images
-from scripts.video_editing.story_to_video import create_video
+from scripts.text_generation.character_descriptions import add_characters
+from scripts.text_generation.story import create_story
+from scripts.text_generation.sound_prompts import add_sound_prompts
+from scripts.text_generation.image_prompts import add_image_prompts
+from scripts.sounds_and_music.elevenlabs_sound_generator import add_music, add_sounds_mp3
+from scripts.video_editing.story_to_video import create_video_lines, merge_video_chunks, finalize_video
+from scripts.text_to_speech.google_ttx import add_narrations
+from scripts.text_to_speech.elevenlabs_api import add_narrations
+from scripts.image_generation.flux_schnell import generate_story_images
 
 
-def create_story(story_prompt, story_title=None):
-    if story_title is None:
-        story_folder = create_full_story(story_prompt)
-    else:
-        story_folder = Path() / 'stories' / story_title
-    add_story_images(story_folder)
-    scrape_sounds(story_folder)
-    create_recordings(story_folder)
-    create_video(story_folder)
+def make_story(prompt, story_dir=None):
+    if prompt:
+        story_dir = create_story(prompt)
+    add_characters(story_dir)
+    add_image_prompts(story_dir)
+    add_sound_prompts(story_dir)
+    add_sounds_mp3(story_dir)
+    add_music(story_dir)
+    add_narrations(story_dir)
+    generate_story_images(story_dir)
+    create_video_lines(story_dir)
+    merge_video_chunks(story_dir)
+    finalize_video(story_dir)
 
 
 if __name__ == '__main__':
-    prompt = ("write me a very short story about a hospital named 'the vally' in afula, israel. "
-              "the hospital decided to add a gym to the hospital employees, it was very good. add to the story about the benefits of a gym in a workplace")
-    create_story(prompt, 'The Valley’s Transformation')
+    my_prompt = ""
+    my_dir = Path("stories\\The Shirtless Saga of Moriah Battalion's Communications Unit")
+    make_story(my_prompt, my_dir)
+
+

@@ -4,17 +4,25 @@ from concurrent.futures import ThreadPoolExecutor
 
 from tqdm import tqdm
 import replicate
-import cv2 as cv
+
 
 FLUX_WORKERS = 4
 
 
 def generate_image_from_prompt(client: replicate.Client, image_prompt: str, output_path, pbar=None):
-    output = client.run("black-forest-labs/flux-schnell", input={"prompt": image_prompt})
-    with open(str(output_path).replace(".png", ".webp"), "wb") as file:
-        file.write(output[0].read())
-    image = cv.imread(str(output_path).replace(".png", ".webp"), -1)
-    cv.imwrite(output_path, image)
+    output = client.run(
+        "bytedance/seedream-3",
+        input={
+            "size": "regular",
+            "width": 2048,
+            "height": 2048,
+            "prompt": image_prompt,
+            "aspect_ratio": "16:9",
+            "guidance_scale": 2.5
+        }
+    )
+    with open(output_path, "wb") as file:
+        file.write(output.read())
     if pbar:
         pbar.update(1)
 
@@ -47,5 +55,6 @@ def generate_story_images(story_dir: Path, force=False):
 
 if __name__ == '__main__':
     prompt = "a dog"
-    generate_image_from_prompt(prompt, "david.png")
+    print(os.getenv("REPLICATE_KEY"))
+    generate_image_from_prompt(replicate.Client(os.getenv("REPLICATE_KEY")), prompt, "david.png")
 

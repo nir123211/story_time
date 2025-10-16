@@ -1,0 +1,13 @@
+Task:
+You are given a short story where each line represents one separate sentence or fragment.
+The story may be written in Hebrew or English.
+
+If the text is in Hebrew, translate it into English **line by line**, keeping the **same structure and line breaks** — every input line must correspond to one output line.
+If the text is already in English, **output it exactly as it is**, without any changes.
+
+Instructions:
+
+1. Preserve line order and spacing — do not merge or split lines.
+2. Keep punctuation and tone consistent with the original.
+3. Do not add explanations, numbering, or extra text.
+4. Output only the translated or unchanged lines, separated by newlines in the same order.

@@ -8,35 +8,43 @@ from scripts.text_generation.character_descriptions import add_characters
 from scripts.text_generation.story import create_story, change_story
 from scripts.text_generation.sound_prompts import add_sound_prompts
 from scripts.text_generation.image_prompts import add_image_prompts
-from scripts.sounds_and_music.sounds_adder import add_music, add_sounds_mp3
-from scripts.text_to_speech.elevenlabs_api import add_narrations
+from scripts.sounds_and_music.elevenlabs_sound_generator import add_music, add_sounds_mp3
 from scripts.video_editing.story_to_video import (create_video_lines, create_line_video, merge_video_chunks,
                                                   finalize_video)
-from scripts.image_generation.flux_schnell import generate_story_images
 
 
 def get_options():
     col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
-        text_generation_mode = st.selectbox("select image generation mode:", ["api"])
-        text_generation_model = st.selectbox("select model:", ["gpt_4_o"])
+        text_generation_options = {"Paid": ["Chat Gpt 4"]}
+        text_generation_mode = st.selectbox("select text generation mode:", text_generation_options.keys())
+        text_generation_model = st.selectbox("select model:", text_generation_options[text_generation_mode])
+
+        if text_generation_model == "Chat Gpt 4" and not os.environ.get("GPT_KEY"):
+            openai_key = st.text_input("Please enter OpenAI API key")
+            os.environ["GPT_KEY"] = openai_key
 
     with col2:
         tts_options = {"Free": ["Google Text To Speech"], "Paid": ["Eleven Labs"]}
-        speech_generation_mode = st.selectbox("Select Speech Generation Mode:", tts_options.keys())
-        speech_generation_model = st.selectbox("select model:",
-                                              tts_options[speech_generation_mode])
-        if speech_generation_model == "Google Text To Speech":
-            from scripts.text_to_speech.google_ttx import add_narrations
-        elif speech_generation_model == "Eleven Labs":
-            from scripts.text_to_speech.elevenlabs_api import add_narrations
+        speech_generation_mode = st.selectbox("Select Speech Generation Mode:", tts_options.keys(), 1)
+        speech_generation_model = st.selectbox("select model:", tts_options[speech_generation_mode])
+
+        st.session_state['tts_mode'] = speech_generation_model
+
+        if speech_generation_mode == "Paid" and not os.environ.get("ELEVEN_KEY"):
+            eleven_key = st.text_input("Please enter ElevenLabs API key")
+            os.environ["ELEVEN_KEY"] = eleven_key
 
     with col3:
-        image_generation_options = {"Paid": ["Flux (schnell)"]}
+        image_generation_options = {"Paid": ["Flux (schnell)", "SeaDream3"]}
         image_generation_mode = st.selectbox("select image generation mode:", image_generation_options.keys())
         image_generation_model = st.selectbox("select model:", image_generation_options[image_generation_mode])
-        if image_generation_model == "Flux (schnell)":
-            from scripts.image_generation.flux_schnell import generate_story_images, generate_image_from_prompt
+        st.session_state["image_generation_mode"] = image_generation_model
+
+        if image_generation_mode == "Paid" and not os.environ.get("REPLICATE_KEY"):
+            replicate_key = st.text_input("Please enter Replicate.AI API key")
+            os.environ["REPLICATE_KEY"] = replicate_key
+
         if st.button('Continue'):
             st.session_state['status'] = 'create_story'
             st.rerun()
@@ -80,12 +88,12 @@ def show_characters():
     st.header('Story Characters: \n')
     story_dir = st.session_state['story_dir']
     characters_file = story_dir / "characters.json"
-    characters = json.loads(characters_file.read_text())
+    characters = json.loads(characters_file.read_text())["characters"]
     index = st.session_state.setdefault('index', 0)
     character = [*characters.keys()][index]
-    description = characters[character]['description']
+    description = characters[character]
     st.subheader(f"{character}:")
-    characters[character]['description'] = st.text_area('Edit the Character here', value=description, height=500)
+    characters[character] = st.text_area('Edit the Character here', value=description, height=500)
     col1, col2, col3 = st.columns([1, 1, 1])
     if col1.button('Previous Character'):
         if st.session_state['index'] > 0:
@@ -110,6 +118,22 @@ def show_characters():
 
 
 def load_lines():
+    if st.session_state['tts_mode'] == "Google Text To Speech":
+        from scripts.text_to_speech.google_ttx import add_narrations
+    elif st.session_state['tts_mode'] == "Eleven Labs":
+        from scripts.text_to_speech.elevenlabs_api import add_narrations
+    else:
+        raise ValueError("no tts mode")
+
+    if st.session_state['image_generation_mode'] == "Flux (schnell)":
+        from scripts.image_generation.flux_schnell import generate_story_images
+        st.session_state["video_size"] = [1024, 1024]
+    elif st.session_state['image_generation_mode'] == "SeaDream3":
+        from scripts.image_generation.seedream3 import generate_story_images
+        st.session_state["video_size"] = [1280, 720]
+    else:
+        raise Exception("invalid image generation mode")
+
     story_dir = st.session_state['story_dir']
     with st.status('Thinking about the right images...', expanded=True):
         add_image_prompts(story_dir)
@@ -117,6 +141,7 @@ def load_lines():
         add_sound_prompts(story_dir)
     with st.status('Adding Sounds...', expanded=True):
         add_sounds_mp3(story_dir)
+        pass
     with st.status('Adding Music...', expanded=True):
         add_music(story_dir)
     with st.status('Narrating...', expanded=True):
@@ -124,7 +149,7 @@ def load_lines():
     with st.status('Generating images...', expanded=True):
         generate_story_images(story_dir)
     with st.status('creating scenes...', expanded=True):
-        create_video_lines(story_dir)
+        create_video_lines(story_dir, st.session_state["video_size"])
     st.session_state['status'] = 'lines'
     st.session_state['index'] = 1
     st.rerun()
@@ -171,7 +196,7 @@ def edit_line():
     if col1.button('Change image'):
         (line_dir / 'image.txt').write_text(image_prompt)
         # generate_image(image_prompt, (line_dir / 'image.png'))
-        create_line_video(line_dir, force=True)
+        create_line_video(line_dir, st.session_state["video_size"], force=True)
         st.rerun()
     sound_prompt = (line_dir / 'sound.txt').read_text()
     sound_prompt = col2.text_area('Edit the sound prompt here', value=sound_prompt, height=300)
@@ -189,7 +214,7 @@ def finish_video():
     with st.status('adding_music', expanded=True):
         merge_video_chunks(story_dir)
     with st.status('Finalizing video', expanded=True):
-        finalize_video(story_dir)
+        finalize_video(story_dir, st.session_state["video_size"])
     st.session_state['status'] = 'show_video'
     st.rerun()
 

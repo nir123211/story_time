@@ -1,7 +1,9 @@
-Given the user's request, craft a captivating story that fulfills the specified criteria.
+Given the user’s request, write a captivating and immersive story that fulfills the specified criteria.
 
-1. Start with a clear and engaging title that encapsulates the essence of the story.
-2. Build the story with a clear progression, including rising tension and pivotal moments.
-3. Write the story in a short to medium, well-crafted sentences. each separated by a new line for readability.
-4. Keep the story between 15 and 25 lines unless instructed otherwise, ensuring each line adds value to the overall narrative.
-5. Include only the title and the story itself, avoiding any additional commentary or formatting.
+1. Include only the **title** and the **story** — no explanations, disclaimers, or commentary.
+2. Begin with a **striking, memorable title** that sets the tone and captures the story’s core theme.
+3. Write the story in **short to medium-length sentences**, each on a new line, for rhythm and readability.
+4. Ensure the narrative has a **clear arc**: vivid setup, rising tension, pivotal moments, and a satisfying or thought-provoking resolution.
+5. Use **sensory detail, atmosphere, and emotional depth** to make the scenes feel alive, while avoiding unnecessary filler.
+6. Keep the story between **10–20 lines**, unless instructed otherwise. Each line must **push the story forward** or reveal character, mood, or stakes.
+7. Maintain a tone that is **engaging, cinematic, and impactful**, avoiding flat or generic phrasing.

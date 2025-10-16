@@ -1,25 +1,67 @@
-Given a story prompt and a story, create a JSON file that contains each main character's name as the key. For each key, provide a short but accurate description of the character's physical appearance (excluding their clothing). The descriptions should include essential aspects such as facial features, hair color and style, eye color, body type, and any distinguishing marks or features. Ensure the descriptions are consistent enough to recreate approximately the same character every time. The JSON file should be structured as follows:
+Task:
+Given a story prompt and the full story text, produce **only a fully valid JSON object** describing the story’s world, main characters, and key locations. The JSON must be **syntactically correct**, contain **all required fields**, and include **fully detailed, vivid text** for every field. Do not output explanations, markdown, or any text outside of JSON.
+
+Requirements:
+
+World Identity (Global Consistency):
+Provide a single free-text description covering:
+
+1. Time period / setting — historical, modern, futuristic, fantasy, etc.
+2. Art style / visual style — realistic, cinematic, painterly, anime, noir, comic, etc.
+3. Color palette — dominant tones appearing throughout the story.
+4. Lighting style — warm, dark and moody, surreal neon, natural daylight, etc.
+5. Atmospheric tone — serene, tense, eerie, hopeful, chaotic, etc.
+6. Recurring props / symbols — objects or motifs appearing consistently across scenes.
+
+Characters:
+For each main character, provide a 4–6 sentence vivid description including:
+
+* Name, age, gender
+* Facial features
+* Hair (color, length, texture, style)
+* Eyes (color, shape, expression)
+* Skin tone / complexion
+* Height / stature
+* Body type / build
+* Posture / body language
+* Distinguishing marks or features
+* Clothing
+* Ethnicity / cultural background (if implied)
+
+Locations:
+For each main location, provide a 4–6 sentence vivid description including:
+
+* Name
+* Physical environment (architecture, landscape, layout)
+* Colors / textures
+* Lighting
+* Sounds
+* Scents / air quality
+* Atmosphere / mood
+* Optional: How it connects back to the global world identity
+
+Output Format:
+The JSON must exactly follow this structure, with **all fields fully populated**:
 
 {
-  "CharacterName1": {
-    "description": "Short description of CharacterName1's physical appearance."
-  },
-  "CharacterName2": {
-    "description": "Short description of CharacterName2's physical appearance."
-  },
-  ...
+"world\_identity": "A 4–6 sentence detailed description covering time period, art style, color palette, lighting, atmosphere, and recurring props",
+"characters": {
+"Character Name": "4–6 sentence vivid description including age, gender, facial features, hair, eyes, skin tone, height, body type, posture, distinguishing marks, clothing, ethnicity",
+"Character Name": "..."
+},
+"locations": {
+"Location Name": "4–6 sentence vivid description including physical environment, colors/textures, lighting, sounds, scents, atmosphere, relation to world identity",
+"Location Name": "..."
+}
 }
 
-Here is an example of what the output might look like:
+Strict Model Instructions:
 
-{
-  "John Doe": {
-    "description": "John Doe has sharp features, piercing blue eyes, short black hair, and a muscular build with a slight scar above his left eyebrow."
-  },
-  "Jane Smith": {
-    "description": "Jane Smith has a heart-shaped face, green eyes, wavy auburn hair, and a slender build with fair skin."
-  }
-}
-
-Please ensure each description is unique and captures the essence of the character's appearance concisely.
+1. Output **only JSON**, with **no extra text**, markdown, or placeholders.
+2. Fill **every field** with rich, vivid, detailed text.
+3. Ensure **valid JSON syntax**: all quotes, commas, and braces must be correct.
+4. Include **all main characters and locations** mentioned in the story, regardless of number.
+5. Ensure descriptions are **sufficient for consistent visual recreation**.
+6. If the story is very long, **truncate descriptions carefully to maintain JSON validity**, but still keep them vivid and complete for each character/location.
+7. Always return the JSON in **one single output**, fully parseable.
 

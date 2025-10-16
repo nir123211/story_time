@@ -3,34 +3,25 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
 from tqdm import tqdm
-import requests
-from misc import keys, voices
+from elevenlabs import ElevenLabs
+from scripts.text_to_speech import voices
 
-ELEVEN_LABS_WORKERS = 1
+ELEVEN_LABS_WORKERS = 2
 
 
 def text_to_speech(voice_id, text, output_path, pbar=None):
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/Z3R5wn05IrDiVCyEkUrK"
 
-    headers = {
-      "Accept": "audio/mpeg",
-      "Content-Type": "application/json",
-      "xi-api-key": keys.eleven_key
-    }
+    client = ElevenLabs(api_key="1effddbb452b2a49fdeebbe53189391a")
+    audio = client.text_to_speech.convert(
+        voice_id="Z3R5wn05IrDiVCyEkUrK",
+        model_id="eleven_v3",
+        text=text,
+        output_format="mp3_44100_128",
+    )
 
-    data = {
-      "text": text,
-      "model_id": "eleven_monolingual_v1",
-      "voice_settings": {
-        "stability": 0.8,
-        "similarity_boost": 0.5
-      }
-
-    }
-
-    response = requests.post(url, json=data, headers=headers)
-    with open(output_path, 'wb') as f:
-        for chunk in response.iter_content(chunk_size=1024):
+    with open(output_path, "wb") as f:
+        for chunk in audio:
             if chunk:
                 f.write(chunk)
     if pbar:
